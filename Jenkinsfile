@@ -48,12 +48,12 @@ node {
 			rc = command "echo y | ${toolbelt}sfdx plugins:install sfpowerkit"
       			if (isUnix()) 
 				{
-                		rc = sh "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT"
-            			}
+					rc = sh "${toolbelt}sfdx sfpowerkit:auth:login -u ${SF_USERNAME} -p DevOps@1123585d0Wg3b8atVSCe3VJvcG0WTb -r ${SF_INSTANCE_URL}"
+				}
 			else	
 				{
-	         		rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT"
-            			}
+	         			rc = command "${toolbelt}sfdx sfpowerkit:auth:login -u ${SF_USERNAME} -p DevOps@1123585d0Wg3b8atVSCe3VJvcG0WTb -r ${SF_INSTANCE_URL}"
+          			}
 		    	if (rc != 0) 
 				{
 				error 'Salesforce org authorization failed.'
