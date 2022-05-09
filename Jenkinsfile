@@ -9,7 +9,7 @@ node {
     def SF_CONSUMER_KEY_PROD=env.SF_CONSUMER_KEY_PROD
     def SF_USERNAME_PROD=env.SF_USERNAME_PROD
     def SERVER_KEY_CREDENTIALS_ID_PROD=env.SERVER_KEY_CREDENTIALS_ID_PROD
-    def ORG_ALIAS = 'PROD'
+    def PROD_ORG_ALIAS = 'PROD'
 	
     // -------------------------------------------------------------------------
     // Defining Org Variables - Development
@@ -18,7 +18,7 @@ node {
     def SF_CONSUMER_KEY_DEV=env.SF_CONSUMER_KEY_DEV
     def SF_USERNAME_DEV=env.SF_USERNAME_DEV
     def SERVER_KEY_CREDENTIALS_ID_DEV=env.SERVER_KEY_CREDENTIALS_ID_DEV
-    def ORG_ALIAS = 'DEV'
+    def DEV_ORG_ALIAS = 'DEV'
 	
     // -------------------------------------------------------------------------
     // Defining Org Variables - QA
@@ -27,7 +27,7 @@ node {
     def SF_CONSUMER_KEY_QA=env.SF_CONSUMER_KEY_QA
     def SF_USERNAME_QA=env.SF_USERNAME_QA
     def SERVER_KEY_CREDENTIALS_ID_QA=env.SERVER_KEY_CREDENTIALS_ID_QA
-    def ORG_ALIAS = 'QA'
+    def QA_ORG_ALIAS = 'QA'
 	
     //def DEPLOYMENT_TYPE=env.DEPLOYMENT_TYPE // Incremental Deployment = DELTA ; Full Deployment = FULL
     //def SF_SOURCE_COMMIT_ID=env.SOURCE_BRANCH
@@ -57,8 +57,6 @@ node {
     stage('checkout source') {
         checkout scm
     }
-	
-
 
     // -------------------------------------------------------------------------
     // Run all the enclosed stages with access to the Salesforce
@@ -67,7 +65,11 @@ node {
 
  	withEnv(["HOME=${env.WORKSPACE}"]) {	
 	echo "workspace directory is ${workspace}"
-	    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
+	    withCredentials([
+		    file(credentialsId: SERVER_KEY_CREDENTIALS_ID_PROD, variable: 'server_key_file_prod'),
+		    file(credentialsId: SERVER_KEY_CREDENTIALS_ID_DEV, variable: 'server_key_file_dev')
+	    ]) {
+		    
 		// -------------------------------------------------------------------------
 		// Authenticate to Salesforce using the server key.
 		// Install Powerkit Plugin
@@ -78,9 +80,15 @@ node {
     		}
 		    
 		stage('Authorize Salesforce Org') {
-      			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias ${ORG_ALIAS}"
+			when {
+				branch 'master'
+			}
+			steps
+			{
+      			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY_PROD} --jwtkeyfile ${server_key_file_prod} --username ${SF_USERNAME_PROD} --setalias ${PROD_ORG_ALIAS}"
 			if (rc != 0) {
     				error('Authorization Failed.')
+			}
 			}
 		}
 		
