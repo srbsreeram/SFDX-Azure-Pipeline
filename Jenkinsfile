@@ -82,10 +82,10 @@ node {
 		stage('Authorize Salesforce Org') {
 			when {
 				branch 'master'
+			}
       			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY_PROD} --jwtkeyfile ${server_key_file_prod} --username ${SF_USERNAME_PROD} --setalias ${PROD_ORG_ALIAS}"
 			if (rc != 0) {
     				error('Authorization Failed.')
-			}
 			}
 		}
 		
