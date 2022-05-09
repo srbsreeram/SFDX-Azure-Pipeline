@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+ 
+<ruleset name="Custom Rules"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>Custom Ruleset for Apex code</description>
+ 
+    <rule ref="category/apex/bestpractices.xml/ApexUnitTestShouldNotUseSeeAllDataTrue" />
+    <rule ref="category/apex/bestpractices.xml/ApexUnitTestClassShouldHaveAsserts" />
+    <rule name="AvoidDeeplyNestedIfStmts" message="Avoid creating deeply nested if-then statements since they are harder to read and error-prone to maintain." class="net.sourceforge.pmd.lang.apex.rule.complexity.AvoidDeeplyNestedIfStmtsRule">
+      <description>
+      Avoid creating deeply nested if-then statements since they are harder to read and error-prone to maintain.
+      </description>
+        <priority>3</priority>
+      <example>
+        <![CDATA[ public class Foo { public void bar(Integer x, Integer y, Integer z) { if (x>y) {
+                        if (y>z) {
+                            if (z==x) {
+                                // !! too deep
+                            }
+                        }
+                    }
+                }
+            }
+        ]]>
+      </example>
+    </rule>
+     
+    <rule name="ExcessiveParameterList" message="Methods with numerous parameters are a challenge to maintain, especially if most of them share the same datatype. These situations usually denote the need for new objects to wrap the numerous parameters." class="net.sourceforge.pmd.lang.apex.rule.complexity.ExcessiveParameterListRule">
+      <description>
+      Methods with numerous parameters are a challenge to maintain, especially if most of them share the same datatype. These situations usually denote the need for new objects to wrap the numerous parameters.
+      </description>
+        <priority>3</priority>
+      <example>
+        <![CDATA[
+// too many arguments liable to be mixed up
+public void addPerson(int birthYear, int birthMonth, int birthDate, int height, int weight, int ssn)
+{ ... }
+ 
+// preferred approach public void addPerson(Date birthdate, BodyMeasurements measurements, int ssn)
+{ ... }
+]]>
+      </example>
+    </rule>
+     
+     <rule name="ExcessiveClassLength" message="Excessive class file lengths are usually indications that the class may be burdened with excessive responsibilities that could be provided by external classes or functions. In breaking these methods apart the code becomes more managable and ripe for reuse." class="net.sourceforge.pmd.lang.apex.rule.complexity.ExcessiveClassLengthRule">
+      <description>
+      Excessive class file lengths are usually indications that the class may be burdened with excessive responsibilities that could be provided by external classes or functions. In breaking these methods apart the code becomes more managable and ripe for reuse.
+      </description>
+        <priority>3</priority>
+      <example>
+        <![CDATA[
+public class Foo { public void bar(Integer x, Integer y, Integer z) { if (x>y) {
+                        if (y>z) {
+                            if (z==x) {
+                                // !! too deep
+                            }
+                        }
+                    }
+                }
+            }
+        ]]>
+      </example>
+    </rule>
+     
+    <rule name="NcssMethodCount" message="This rule uses the NCSS (Non-Commenting Source Statements) algorithm to determine the number of lines of code for a given method. NCSS ignores comments, and counts actual statements. Using this algorithm, lines of code that are split are counted as one." class="net.sourceforge.pmd.lang.apex.rule.complexity.NcssMethodCountRule">
+      <description>
+      This rule uses the NCSS (Non-Commenting Source Statements) algorithm to determine the number of lines of code for a given method. NCSS ignores comments, and counts actual statements. Using this algorithm, lines of code that are split are counted as one.
+      </description>
+        <priority>3</priority>
+      <example>
+        <![CDATA[
+public class Foo extends Bar
+{
+//this method only has 1 NCSS lines
+public Integer methd() {
+super.methd();
+return 1;
+} }
+]]>
+      </example>
+    </rule>
+</ruleset>
