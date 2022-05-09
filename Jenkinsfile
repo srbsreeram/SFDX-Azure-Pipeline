@@ -29,7 +29,10 @@ node {
     stage('checkout source') {
         checkout scm
     }
-
+	
+	stage('Install Powerkit Plugin') {
+        rc = sh "echo 'y' | ${toolbelt}sfdx plugins:install sfpowerkit"
+    }
 
     // -------------------------------------------------------------------------
     // Run all the enclosed stages with access to the Salesforce
@@ -41,20 +44,10 @@ node {
 	    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
 		// -------------------------------------------------------------------------
 		// Authenticate to Salesforce using the server key.
-		// Installing SF Powerkit Plugin
 		// -------------------------------------------------------------------------
 
 		stage('Authorize to Salesforce') {
-			rc = command "echo y | ${toolbelt}sfdx plugins:install sfpowerkit"
-      			if (isUnix()) 
-				{
-					rc = sh '${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT'
-				}
-			else	
-				{
-	         			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT"
-          			}
-			
+      			rc = sh '${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT'
 			if (rc == 0) 
 				{
 					echo "Authorization Successful."
