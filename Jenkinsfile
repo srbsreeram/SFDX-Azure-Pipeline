@@ -50,7 +50,7 @@ node {
 		    
 		stage('Authorize to Salesforce') {
       			rc = sh '${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT'
-			echo "Authorization Sussessful.
+			echo "Authorization Sussessful."
 		}
 		 
 		// -------------------------------------------------------------------------
