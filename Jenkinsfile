@@ -45,10 +45,10 @@ node {
 		// -------------------------------------------------------------------------
 
 		stage('Install Powerkit Plugin') {
-        		rc = sh "echo 'y' | ${toolbelt}sfdx plugins:install sfpowerkit"
+        		rc = command "echo y | ${toolbelt}sfdx plugins:install sfpowerkit"
     		}
 		    
-		stage('Authorize to Salesforce') {
+		stage('Authorize Salesforce Org') {
       			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias DEVHUB"
 			if (rc != 0) {
     				error('Authorization Failed.')
@@ -59,10 +59,14 @@ node {
 		// Creating Delta Package with the changes.
 		// -------------------------------------------------------------------------
 
-		stage('Create_Delta_Package') {
+		stage('Create Delta Package') {
       			if (DEPLOYMENT_TYPE == 'DELTA'){
 				echo "Deploying DELTA Components from Repository"
-            			rc = sh "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
+            				rc = command "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
+				if (rc != 0) 
+				{
+    					error('Delta Package Creation Failed.')
+				}
           		}
           		else{
               			echo "Deploying All Components from Repository"
