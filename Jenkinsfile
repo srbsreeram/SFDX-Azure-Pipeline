@@ -41,7 +41,7 @@ node {
     def DEPLOYMENT_TYPE= 'FULL' // Incremental Deployment = DELTA ; Full Deployment = FULL
     def DEPLOYDIR='force-app'
     def SF_DELTA_FOLDER='DELTA_PKG'
-    def TEST_LEVEL= ''
+    def TEST_LEVEL= 'NoTestRun'
     def SF_SOURCE_COMMIT_ID='a183bea2459ebb766aeaed287b516eacfd749059'
     def SF_TARGET_COMMIT_ID='fb602c8073b9779a1fb592267ab341c44f3645d9'
     def APEX_PMD = 'True'
