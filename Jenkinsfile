@@ -77,16 +77,20 @@ node {
 		// Validating Stage.
 		// -------------------------------------------------------------------------
 
-		stage('Package_Validation') {
+		stage('Package Validation') {
       			if (DEPLOYMENT_TYPE == 'DELTA')
             		{
-            			rc = sh "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-				echo "Component Validation Successful"
+            			rc = command "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				if (rc != 0) {
+    				error('Package Validation Failed.')
+				}
             		}
             		else
             		{
-            			rc = sh "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-				echo "Component Validation Successful"
+            			rc = command "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				if (rc != 0) {
+    				error('Authorization Failed.')
+				}
             		}
         	}
 		    
@@ -95,16 +99,20 @@ node {
 		// -------------------------------------------------------------------------
     
 		    
-		stage('Package_Deployment') {
+		stage('Package Deployment') {
       			if (DEPLOYMENT_TYPE == 'DELTA')
             		{
-            			rc = sh "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-				echo "Component Validation Successful"
+            			rc = command "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				if (rc != 0) {
+    				error('Authorization Failed.')
+				}
             		}
             		else
             		{
-            			rc = sh "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-            			echo "Component Validation Successful"
+            			rc = command "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+            			if (rc != 0) {
+    				error('Authorization Failed.')
+				}
             		}
         	}
 		    
