@@ -55,10 +55,10 @@ node {
 	         			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT"
           			}
 			ret=rc
-			if (rc -ne 0) 
-				{
-					error 'Delta Package Creation failed.'
-		    		}
+			//if (rc -ne 0) 
+			//	{
+			//		error 'Delta Package Creation failed.'
+		    	//	}
 		}
 		 
 		// -------------------------------------------------------------------------
