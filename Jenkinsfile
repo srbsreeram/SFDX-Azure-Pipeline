@@ -58,22 +58,12 @@ node {
 		// -------------------------------------------------------------------------
 
 		stage('Create_Delta_Package') {
-      			if (DEPLOYMENT_TYPE == 'DELTA'){	
-            			if (isUnix()) 
-				{
-                			rc = sh "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
-            			}
-				else
-				{
-	         			rc = command "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
-            			}
-		    		if (rc != 0) 
-				{
-					error 'Delta Package Creation failed.'
-		    		}
+      			if (DEPLOYMENT_TYPE == 'DELTA'){
+				echo "Deploying DELTA Components from Repository"
+            			rc = sh "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
           		}
           		else{
-              			echo "Deployment is for All Components from Repository"
+              			echo "Deploying All Components from Repository"
           		}
 		}
 
@@ -84,30 +74,14 @@ node {
 		stage('Package_Validation') {
       			if (DEPLOYMENT_TYPE == 'DELTA')
             		{
-            			if (isUnix()) 
-				{
-                			rc = sh "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-            			}
-				else	
-				{
-	         			rc = command "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-            			}
+            			rc = sh "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				echo "Component Validation Successful"
             		}
             		else
             		{
-            			if (isUnix()) 
-				{
-                			rc = sh "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-            			}
-				else	
-				{
-	         			rc = command "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-            			}
+            			rc = sh "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				echo "Component Validation Successful"
             		}
-		    	if (rc != 0) 
-				{
-				error 'Component Validation Failed.'
-		    		}
         	}
 		    
 		// -------------------------------------------------------------------------
@@ -118,30 +92,14 @@ node {
 		stage('Package_Deployment') {
       			if (DEPLOYMENT_TYPE == 'DELTA')
             		{
-            			if (isUnix()) 
-				{
-                			rc = sh "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-            			}
-				else	
-				{
-	         			rc = command "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-            			}
+            			rc = sh "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				echo "Component Validation Successful"
             		}
             		else
             		{
-            			if (isUnix()) 
-				{
-                			rc = sh "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-            			}
-				else	
-				{
-	         			rc = command "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
-            			}
+            			rc = sh "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+            			echo "Component Validation Successful"
             		}
-		    	if (rc != 0) 
-				{
-				error 'Component Validation Failed.'
-		    		}
         	}
 		    
 		// -------------------------------------------------------------------------
