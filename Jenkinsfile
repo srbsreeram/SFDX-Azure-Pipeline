@@ -80,7 +80,7 @@ node {
     		}
 		    
 		stage('Authorize Salesforce Org') {
-			if (env.BRANCH_NAME == master) {
+			if (env.BRANCH_NAME ==~ /(master)/) {
 				rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY_PROD} --jwtkeyfile ${server_key_file_prod} --username ${SF_USERNAME_PROD} --setalias ${PROD_ORG_ALIAS}"
 				echo "success"
 			}
