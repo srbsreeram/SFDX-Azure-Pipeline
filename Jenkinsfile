@@ -70,11 +70,11 @@ node {
 			{
       				if (DEPLOYMENT_TYPE == 'DELTA')
             			{
-            				rc = command "${toolbelt}sfdx sfpowerkit:source:pmd -d ${SF_DELTA_FOLDER}/${DEPLOYDIR} -r ApexPMD_Default.xml -o PMD_report.html -f html"
+            				rc = command "${toolbelt}sfdx sfpowerkit:source:pmd -d ${SF_DELTA_FOLDER}/${DEPLOYDIR} -r APEXPMD.xml -o PMD_report.html -f html"
             			}
             			else
             			{
-					rc = command "${toolbelt}sfdx sfpowerkit:source:pmd -d ${DEPLOYDIR} -r ApexPMD_Default.xml -o PMD_report.html -f html"
+					rc = command "${toolbelt}sfdx sfpowerkit:source:pmd -d ${DEPLOYDIR} -r APEXPMD.xml -o PMD_report.html -f html"
             			}
 			//publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'coverage', reportFiles: 'PMD_report.html', reportName: 'HTML Report', reportTitles: 'Coverage Report'])
 		    	if (rc != 0) 
