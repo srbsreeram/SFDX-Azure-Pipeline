@@ -3,22 +3,45 @@
 node {
     
     // -------------------------------------------------------------------------
-    // Defining Org Variables
+    // Defining Org Variables - PRODUCTION
     // -------------------------------------------------------------------------
 	
-    def SF_CONSUMER_KEY=env.SF_CONSUMER_KEY
-    def SF_USERNAME=env.SF_USERNAME
-    def SERVER_KEY_CREDENTIALS_ID=env.SERVER_KEY_CREDENTIALS_ID
-    def DEPLOYDIR='force-app'
-    def SF_DELTA_FOLDER='DELTA_PKG'
-    def TEST_LEVEL= env.TEST_LEVEL
-    def SF_INSTANCE_URL = env.SF_INSTANCE_URL ?: "https://login.salesforce.com"
+    def SF_CONSUMER_KEY_PROD=env.SF_CONSUMER_KEY_PROD
+    def SF_USERNAME_PROD=env.SF_USERNAME_PROD
+    def SERVER_KEY_CREDENTIALS_ID_PROD=env.SERVER_KEY_CREDENTIALS_ID_PROD
+    def ORG_ALIAS = 'PROD'
+	
+    // -------------------------------------------------------------------------
+    // Defining Org Variables - Development
+    // -------------------------------------------------------------------------
+	
+    def SF_CONSUMER_KEY_DEV=env.SF_CONSUMER_KEY_DEV
+    def SF_USERNAME_DEV=env.SF_USERNAME_DEV
+    def SERVER_KEY_CREDENTIALS_ID_DEV=env.SERVER_KEY_CREDENTIALS_ID_DEV
+    def ORG_ALIAS = 'DEV'
+	
+    // -------------------------------------------------------------------------
+    // Defining Org Variables - QA
+    // -------------------------------------------------------------------------
+	
+    def SF_CONSUMER_KEY_QA=env.SF_CONSUMER_KEY_QA
+    def SF_USERNAME_QA=env.SF_USERNAME_QA
+    def SERVER_KEY_CREDENTIALS_ID_QA=env.SERVER_KEY_CREDENTIALS_ID_QA
+    def ORG_ALIAS = 'QA'
 	
     //def DEPLOYMENT_TYPE=env.DEPLOYMENT_TYPE // Incremental Deployment = DELTA ; Full Deployment = FULL
     //def SF_SOURCE_COMMIT_ID=env.SOURCE_BRANCH
     //def SF_TARGET_COMMIT_ID=env.TARGET_BRANCH
 	
+    // -------------------------------------------------------------------------
+    // Defining Custom Variables - QA
+    // -------------------------------------------------------------------------
+    
+    def SF_INSTANCE_URL = env.SF_INSTANCE_URL ?: "https://login.salesforce.com"
     def DEPLOYMENT_TYPE= 'FULL' // Incremental Deployment = DELTA ; Full Deployment = FULL
+    def DEPLOYDIR='force-app'
+    def SF_DELTA_FOLDER='DELTA_PKG'
+    def TEST_LEVEL= ''
     def SF_SOURCE_COMMIT_ID='a183bea2459ebb766aeaed287b516eacfd749059'
     def SF_TARGET_COMMIT_ID='fb602c8073b9779a1fb592267ab341c44f3645d9'
     def APEX_PMD = 'True'
@@ -55,7 +78,7 @@ node {
     		}
 		    
 		stage('Authorize Salesforce Org') {
-      			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias DEVHUB"
+      			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias ${ORG_ALIAS}"
 			if (rc != 0) {
     				error('Authorization Failed.')
 			}
