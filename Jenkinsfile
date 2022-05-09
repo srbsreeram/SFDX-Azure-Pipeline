@@ -80,15 +80,13 @@ node {
     		}
 		    
 		stage('Authorize Prod Org') {
-			when {
-				branch 'master'
-			}
 			steps {
-      			sh """
-			echo "success"
-			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY_PROD} --jwtkeyfile ${server_key_file_prod} --username ${SF_USERNAME_PROD} --setalias ${PROD_ORG_ALIAS}"
-			echo "success"
-			"""
+				script{
+					if (env.BRANCH_NAME == master) {
+					rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY_PROD} --jwtkeyfile ${server_key_file_prod} --username ${SF_USERNAME_PROD} --setalias ${PROD_ORG_ALIAS}"
+					echo "success"
+					}
+				}
 			}
 			//if (rc != 0) {
     			//	error('Authorization Failed.')
