@@ -54,7 +54,7 @@ node {
 				{
 	         			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT"
           			}
-			ret=sh
+			ret=rc
 		    	if [ $ret -ne 0 ]; 
 				then
 				echo "Salesforce org authorization failed."
