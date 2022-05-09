@@ -18,9 +18,10 @@ node {
     //def SF_SOURCE_COMMIT_ID=env.SOURCE_BRANCH
     //def SF_TARGET_COMMIT_ID=env.TARGET_BRANCH
 	
-    def DEPLOYMENT_TYPE= 'DELTA' // Incremental Deployment = DELTA ; Full Deployment = FULL
+    def DEPLOYMENT_TYPE= 'FULL' // Incremental Deployment = DELTA ; Full Deployment = FULL
     def SF_SOURCE_COMMIT_ID='a183bea2459ebb766aeaed287b516eacfd749059'
     def SF_TARGET_COMMIT_ID='fb602c8073b9779a1fb592267ab341c44f3645d9'
+    def APEX_PMD = 'True'
     
     //Defining SFDX took kit path against toolbelt
     def toolbelt = tool 'toolbelt'
@@ -46,6 +47,7 @@ node {
 	    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
 		// -------------------------------------------------------------------------
 		// Authenticate to Salesforce using the server key.
+		// Install Powerkit Plugin
 		// -------------------------------------------------------------------------
 
 		stage('Install Powerkit Plugin') {
@@ -58,6 +60,33 @@ node {
     				error('Authorization Failed.')
 			}
 		}
+		
+		// -------------------------------------------------------------------------
+		// APEX PMD Execution
+		// -------------------------------------------------------------------------
+		    
+		stage('ApexPMD_Validation') {
+			if (APEX_PMD == 'True')
+			{
+      				if (DEPLOYMENT_TYPE == 'DELTA')
+            			{
+            				rc = command "${toolbelt}sfdx sfpowerkit:source:pmd -d ${SF_DELTA_FOLDER}/${DEPLOYDIR} -r ApexPMD_Default.xml -o PMD_report.html -f html"
+            			}
+            			else
+            			{
+					rc = command "${toolbelt}sfdx sfpowerkit:source:pmd -d ${DEPLOYDIR} -r ApexPMD_Default.xml -o PMD_report.html -f html"
+            			}
+			//publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'coverage', reportFiles: 'PMD_report.html', reportName: 'HTML Report', reportTitles: 'Coverage Report'])
+		    	if (rc != 0) 
+				{
+				error 'PMD Validation Failed.'
+		    		}
+				}
+				else
+				{
+				echo 'Skipping Apex PMD check'
+				}
+        	}
 		 
 		// -------------------------------------------------------------------------
 		// Creating Delta Package with the changes.
