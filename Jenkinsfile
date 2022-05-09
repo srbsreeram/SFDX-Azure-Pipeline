@@ -49,8 +49,7 @@ node {
     		}
 		    
 		stage('Authorize to Salesforce') {
-      			def rc = sh '${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT'
-			//echo "Authorization Sussessful."
+      			rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias DEVHUB"
 			if (rc != 0) {
     				error('Authorization Failed.')
 			}
