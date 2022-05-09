@@ -145,16 +145,26 @@ node {
 		stage('Package Validation') {
       			if (DEPLOYMENT_TYPE == 'DELTA')
             		{
-            			rc = command "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				if (env.BRANCH_NAME ==~ /(master)/) {
+            				rc = command "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME_PROD} -w 500 -l ${TEST_LEVEL}"
+				}
+				if (env.BRANCH_NAME ==~ /(develop)/) {
+					rc = command "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME_DEV} -w 500 -l ${TEST_LEVEL}"
+				}
 				if (rc != 0) {
     				error('Package Validation Failed.')
 				}
             		}
             		else
             		{
-            			rc = command "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				if (env.BRANCH_NAME ==~ /(master)/) {
+            				rc = command "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME_PROD} -w 500 -l ${TEST_LEVEL}"
+				}
+				if (env.BRANCH_NAME ==~ /(develop)/) {
+					rc = command "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME_DEV} -w 500 -l ${TEST_LEVEL}"
+				}
 				if (rc != 0) {
-    				error('Authorization Failed.')
+    				error('Package Validation Failed.')
 				}
             		}
         	}
@@ -167,16 +177,26 @@ node {
 		stage('Package Deployment') {
       			if (DEPLOYMENT_TYPE == 'DELTA')
             		{
-            			rc = command "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				if (env.BRANCH_NAME ==~ /(master)/) {
+            				rc = command "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME_PROD} -w 500 -l ${TEST_LEVEL}"
+				}
+				if (env.BRANCH_NAME ==~ /(develop)/) {
+					rc = command "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME_DEV} -w 500 -l ${TEST_LEVEL}"
+				}
 				if (rc != 0) {
-    				error('Authorization Failed.')
+    				error('Package Deployment Failed.')
 				}
             		}
             		else
             		{
-            			rc = command "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME} -w 500 -l ${TEST_LEVEL}"
+				if (env.BRANCH_NAME ==~ /(master)/) {
+            				rc = command "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME_PROD} -w 500 -l ${TEST_LEVEL}"
+				}
+				if (env.BRANCH_NAME ==~ /(develop)/) {
+					rc = command "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME_DEV} -w 500 -l ${TEST_LEVEL}"
+				}
             			if (rc != 0) {
-    				error('Authorization Failed.')
+    				error('Package Deployment Failed.')
 				}
             		}
         	}
