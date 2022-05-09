@@ -84,6 +84,10 @@ node {
 				rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY_PROD} --jwtkeyfile ${server_key_file_prod} --username ${SF_USERNAME_PROD} --setalias ${PROD_ORG_ALIAS}"
 				echo "success"
 			}
+			if (env.BRANCH_NAME ==~ /(develop)/) {
+				rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY_DEV} --jwtkeyfile ${server_key_file_dev} --username ${SF_USERNAME_DEV} --setalias ${DEV_ORG_ALIAS}"
+				echo "success"
+			}
 			if (rc != 0) {
     				error('Authorization Failed.')
 			}
