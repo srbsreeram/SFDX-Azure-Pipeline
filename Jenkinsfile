@@ -1,5 +1,10 @@
 #!groovy
 
+parameters {
+    string(defaultValue: "TEST", description: 'What environment?', name: 'userFlag')
+    choice(choices: ['TESTING', 'STAGING', 'PRODUCTIONBOX'], description: 'Select field for target environment', name: 'DEPLOY_AREA')
+    }
+
 node {
     
     // -------------------------------------------------------------------------
@@ -48,11 +53,6 @@ node {
     
     //Defining SFDX took kit path against toolbelt
     def toolbelt = tool 'toolbelt'
-
-    parameters {
-    string(defaultValue: "TEST", description: 'What environment?', name: 'userFlag')
-    choice(choices: ['TESTING', 'STAGING', 'PRODUCTIONBOX'], description: 'Select field for target environment', name: 'DEPLOY_AREA')
-    }
 
     // -------------------------------------------------------------------------
     // Check out code from source control.
