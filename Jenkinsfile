@@ -49,6 +49,10 @@ node {
     //Defining SFDX took kit path against toolbelt
     def toolbelt = tool 'toolbelt'
 
+    parameters {
+    string(defaultValue: "TEST", description: 'What environment?', name: 'userFlag')
+    choice(choices: ['TESTING', 'STAGING', 'PRODUCTIONBOX'], description: 'Select field for target environment', name: 'DEPLOY_AREA')
+    }
 
     // -------------------------------------------------------------------------
     // Check out code from source control.
@@ -126,7 +130,7 @@ node {
 
 		stage('Create Delta Package') {
       			if (DEPLOYMENT_TYPE == 'DELTA'){
-				echo "Deploying DELTA Components from Repository"
+				echo "*** Creating Delta Package ***"
             				rc = command "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
 				if (rc != 0) 
 				{
@@ -134,7 +138,7 @@ node {
 				}
           		}
           		else{
-              			echo "Deploying All Components from Repository"
+              			echo "*** Deploying All Components from Repository ***"
           		}
 		}
 
