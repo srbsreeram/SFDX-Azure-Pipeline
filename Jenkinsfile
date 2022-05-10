@@ -1,5 +1,8 @@
 #!groovy
 
+pipeline {
+    agent any
+	
 parameters {
     string(defaultValue: "TEST", description: 'What environment?', name: 'userFlag')
     choice(choices: ['TESTING', 'STAGING', 'PRODUCTIONBOX'], description: 'Select field for target environment', name: 'DEPLOY_AREA')
@@ -218,7 +221,7 @@ node {
 	    }
 	}
 }
-
+}
 def command(script) {
     if (isUnix()) {
         return sh(returnStatus: true, script: script);
