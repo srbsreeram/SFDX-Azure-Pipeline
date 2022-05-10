@@ -1,11 +1,5 @@
 #!groovy
 
-
-//parameters {
-  //  string(defaultValue: "TEST", description: 'What environment?', name: 'userFlag')
-   // choice(choices: ['TESTING', 'STAGING', 'PRODUCTIONBOX'], description: 'Select field for target environment', name: 'DEPLOY_AREA')
-    //}
-
 node {
     
     // -------------------------------------------------------------------------
@@ -74,11 +68,6 @@ node {
 		    file(credentialsId: SERVER_KEY_CREDENTIALS_ID_PROD, variable: 'server_key_file_prod'),
 		    file(credentialsId: SERVER_KEY_CREDENTIALS_ID_DEV, variable: 'server_key_file_dev')
 	    ]) {
-		    
-	parameters {
-  	string(defaultValue: "TEST", description: 'What environment?', name: 'userFlag')
-   	choice(choices: ['TESTING', 'STAGING', 'PRODUCTIONBOX'], description: 'Select field for target environment', name: 'DEPLOY_AREA')
-    	}
 		    
 		// -------------------------------------------------------------------------
 		// Authenticate to Salesforce using the server key.
