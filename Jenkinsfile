@@ -109,17 +109,7 @@ node {
 		// -------------------------------------------------------------------------
 
 		stage('Create Delta Package') {
-      			if (DEPLOYMENT_TYPE == 'DELTA'){
-				echo "*** Creating Delta Package ***"
-            				rc = command "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
-				if (rc != 0) 
-				{
-    					error('Delta Package Creation Failed.')
-				}
-          		}
-          		else{
-              			echo "*** Deploying All Components from Repository ***"
-          		}
+      			deltaPackaging()
 		}
 		
 		// -------------------------------------------------------------------------
