@@ -38,13 +38,13 @@ node {
     // -------------------------------------------------------------------------
     
     def SF_INSTANCE_URL = env.SF_INSTANCE_URL ?: "https://login.salesforce.com"
-    def DEPLOYMENT_TYPE= 'FULL' // Incremental Deployment = DELTA ; Full Deployment = FULL
+    def DEPLOYMENT_TYPE=env.DEPLOYMENT_TYPE // Incremental Deployment = DELTA ; Full Deployment = FULL
     def DEPLOYDIR='force-app'
     def SF_DELTA_FOLDER='DELTA_PKG'
     def TEST_LEVEL= 'NoTestRun'
-    def SF_SOURCE_COMMIT_ID='a183bea2459ebb766aeaed287b516eacfd749059'
-    def SF_TARGET_COMMIT_ID='fb602c8073b9779a1fb592267ab341c44f3645d9'
-    def APEX_PMD = 'True'
+    def SF_SOURCE_COMMIT_ID=env.SF_SOURCE_COMMIT_ID
+    def SF_TARGET_COMMIT_ID=env.SF_TARGET_COMMIT_ID
+    def APEX_PMD=env.APEX_PMD
     
     //Defining SFDX took kit path against toolbelt
     def toolbelt = tool 'toolbelt'
@@ -73,7 +73,8 @@ node {
 	echo "workspace directory is ${workspace}"
 	    withCredentials([
 		    file(credentialsId: SERVER_KEY_CREDENTIALS_ID_PROD, variable: 'server_key_file_prod'),
-		    file(credentialsId: SERVER_KEY_CREDENTIALS_ID_DEV, variable: 'server_key_file_dev')
+		    file(credentialsId: SERVER_KEY_CREDENTIALS_ID_DEV, variable: 'server_key_file_dev'),
+		    file(credentialsId: SERVER_KEY_CREDENTIALS_ID_QA, variable: 'server_key_file_qa')
 	    ]) {
 		    
 		// -------------------------------------------------------------------------
@@ -94,9 +95,31 @@ node {
 				rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY_DEV} --jwtkeyfile ${server_key_file_dev} --username ${SF_USERNAME_DEV} --setalias ${DEV_ORG_ALIAS}"
 				echo "success"
 			}
+			if (env.BRANCH_NAME ==~ /(CI)/) {
+				rc = command "${toolbelt}sfdx auth:jwt:grant --instanceurl ${SF_INSTANCE_URL} --clientid ${SF_CONSUMER_KEY_QA} --jwtkeyfile ${server_key_file_qa} --username ${SF_USERNAME_QA} --setalias ${QA_ORG_ALIAS}"
+				echo "success"
+			}
 			if (rc != 0) {
     				error('Authorization Failed.')
 			}
+		}
+		    
+		// -------------------------------------------------------------------------
+		// Creating Delta Package with the changes.
+		// -------------------------------------------------------------------------
+
+		stage('Create Delta Package') {
+      			if (DEPLOYMENT_TYPE == 'DELTA'){
+				echo "*** Creating Delta Package ***"
+            				rc = command "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
+				if (rc != 0) 
+				{
+    					error('Delta Package Creation Failed.')
+				}
+          		}
+          		else{
+              			echo "*** Deploying All Components from Repository ***"
+          		}
 		}
 		
 		// -------------------------------------------------------------------------
@@ -125,24 +148,6 @@ node {
 				echo 'Skipping Apex PMD check'
 				}
         	}
-		 
-		// -------------------------------------------------------------------------
-		// Creating Delta Package with the changes.
-		// -------------------------------------------------------------------------
-
-		stage('Create Delta Package') {
-      			if (DEPLOYMENT_TYPE == 'DELTA'){
-				echo "*** Creating Delta Package ***"
-            				rc = command "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
-				if (rc != 0) 
-				{
-    					error('Delta Package Creation Failed.')
-				}
-          		}
-          		else{
-              			echo "*** Deploying All Components from Repository ***"
-          		}
-		}
 
 		// -------------------------------------------------------------------------
 		// Validating Stage.
@@ -157,6 +162,9 @@ node {
 				if (env.BRANCH_NAME ==~ /(develop)/) {
 					rc = command "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME_DEV} -w 500 -l ${TEST_LEVEL}"
 				}
+				if (env.BRANCH_NAME ==~ /(CI)/) {
+					rc = command "${toolbelt}sfdx force:source:deploy -c -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME_QA} -w 500 -l ${TEST_LEVEL}"
+				}
 				if (rc != 0) {
     				error('Package Validation Failed.')
 				}
@@ -168,6 +176,9 @@ node {
 				}
 				if (env.BRANCH_NAME ==~ /(develop)/) {
 					rc = command "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME_DEV} -w 500 -l ${TEST_LEVEL}"
+				}
+				if (env.BRANCH_NAME ==~ /(CI)/) {
+					rc = command "${toolbelt}sfdx force:source:deploy -c -p ${DEPLOYDIR} -u ${SF_USERNAME_QA} -w 500 -l ${TEST_LEVEL}"
 				}
 				if (rc != 0) {
     				error('Package Validation Failed.')
@@ -189,6 +200,9 @@ node {
 				if (env.BRANCH_NAME ==~ /(develop)/) {
 					rc = command "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME_DEV} -w 500 -l ${TEST_LEVEL}"
 				}
+				if (env.BRANCH_NAME ==~ /(CI)/) {
+					rc = command "${toolbelt}sfdx force:source:deploy -p ${SF_DELTA_FOLDER}/${DEPLOYDIR} -u ${SF_USERNAME_QA} -w 500 -l ${TEST_LEVEL}"
+				}
 				if (rc != 0) {
     				error('Package Deployment Failed.')
 				}
@@ -200,6 +214,9 @@ node {
 				}
 				if (env.BRANCH_NAME ==~ /(develop)/) {
 					rc = command "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME_DEV} -w 500 -l ${TEST_LEVEL}"
+				}
+				if (env.BRANCH_NAME ==~ /(CI)/) {
+					rc = command "${toolbelt}sfdx force:source:deploy -p ${DEPLOYDIR} -u ${SF_USERNAME_QA} -w 500 -l ${TEST_LEVEL}"
 				}
             			if (rc != 0) {
     				error('Package Deployment Failed.')
