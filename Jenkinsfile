@@ -83,7 +83,7 @@ node {
 		// -------------------------------------------------------------------------
 
 		stage('Install Powerkit Plugin') {
-        		rc = command "echo y | ${toolbelt}sfdx plugins:install sfpowerkit"
+        		powerkit()
     		}
 		    
 		stage('Authorize Salesforce Org') {
