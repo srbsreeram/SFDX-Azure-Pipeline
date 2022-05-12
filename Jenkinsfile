@@ -69,6 +69,8 @@ node {
 		    file(credentialsId: SERVER_KEY_CREDENTIALS_ID_DEV, variable: 'server_key_file_dev')
 	    ]) {
 		    
+		    properties([parameters([choice(choices: ['', 'FULL', 'DELTA'], name: 'DEPLOYMENT_TYPE'), choice(choices: ['', 'NoTestRun', 'RunSpecifiedTests', 'RunAllTestsInOrg', 'RunLocalTests'], name: 'TEST_LEVEL'), choice(choices: ['', 'True', 'False'], name: 'APEX_PMD')])])
+		    
 		// -------------------------------------------------------------------------
 		// Authenticate to Salesforce using the server key.
 		// Install Powerkit Plugin
