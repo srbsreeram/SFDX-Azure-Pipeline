@@ -9,5 +9,3 @@ public with sharing class apexMaster {
         return 'Hello world, Azure DevOps is in the house!';
     }
 }
-// comment1
-//comment2
