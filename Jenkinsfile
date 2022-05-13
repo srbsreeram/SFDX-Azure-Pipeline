@@ -109,11 +109,17 @@ node {
 		// -------------------------------------------------------------------------
 
 		stage('Create Delta Package') {
-      			withEnv(['def DEPLOYMENT_TYPE=env.DEPLOYMENT_TYPE', 'def DEPLOYDIR=\'force-app\'', 'def SF_DELTA_FOLDER=\'DELTA_PKG\'', 
-				 'def TEST_LEVEL= \'NoTestRun\'', 'def SF_SOURCE_COMMIT_ID=env.SF_SOURCE_COMMIT_ID', 
-				 'def SF_TARGET_COMMIT_ID=env.SF_TARGET_COMMIT_ID']) {
-   			 		deltaPackaging()
+      			if (DEPLOYMENT_TYPE == 'DELTA'){
+				echo "*** Creating Delta Package ***"
+            				rc = command "${toolbelt}sfdx sfpowerkit:project:diff -d ${SF_DELTA_FOLDER} -r ${SF_SOURCE_COMMIT_ID} -t ${SF_TARGET_COMMIT_ID}"
+				if (rc != 0) 
+				{
+    					error('Delta Package Creation Failed.')
 				}
+          		}
+          		else{
+              			echo "*** Deploying All Components from Repository ***"
+          		}
 		}
 		
 		// -------------------------------------------------------------------------
